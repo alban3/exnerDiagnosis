@@ -1,0 +1,28 @@
+#!/bin/sh
+# generate parameter mesh
+foamCleanPolyMesh
+perl generateMeshDict_cyl_3dsedim_baseSedShorten.pl 0.4 -0.05 0.0 0.1 0.2 -0.09 0.4 1.2 0.8 > system/blockMeshDict
+
+# create the mesh
+blockMesh
+
+# renumber the mesh
+renumberMesh -overwrite -constant
+
+# check the mesh
+checkMesh # -allTopology -allGeometry -constant
+
+# create the intial time folder
+cp -r 0_org 0
+
+# Initialize the alpha field
+#funkySetFields -time 0
+
+# Initialize with mapfields
+mapFields path/to/previous/simu -sourceTime latestTime -consistent
+
+# Decompose the case in order to run in parallel (on 4 cores)
+decomposePar
+
+# Run sedFoam in parallel
+mpirun -np 288 sedFoam_rbgh -parallel > log&

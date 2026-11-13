@@ -1,0 +1,124 @@
+/*--------------------------------*- C++ -*----------------------------------*\
+| =========                 |                                                 |
+| \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox           |
+|  \\    /   O peration     | Version:  1.7.1                                 |
+|   \\  /    A nd           | Web:      www.OpenFOAM.com                      |
+|    \\/     M anipulation  |                                                 |
+\*---------------------------------------------------------------------------*/
+FoamFile
+{
+    version     2.0;
+    format      ascii;
+    class       dictionary;
+    location    "system";
+    object      fvSchemes;
+}
+// * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
+
+ddtSchemes
+{
+    //default         backward;
+    default         CrankNicolson 0.5; // used until t=1s
+//    default        Euler implicit;
+}
+
+gradSchemes
+{
+        default         Gauss linear;
+//        grad(Theta)        cellLimited Gauss linear 1;
+//        grad(omega)    cellLimited Gauss linear 1;
+}
+
+divSchemes
+{
+    default         none;
+    div(alphaUa)    Gauss linear;
+// alphaEqn
+    div(phi,alpha)  Gauss vanLeer01 1;
+    div(phir,alpha) Gauss limitedLinear01 1;
+// UEqn
+//    div(phi.a,U.a)    Gauss upwind phi.a; // used until t=1s
+//    div(phi.b,U.b)    Gauss  upwind phi.b; // used until t=1s
+//    div(phi.a,U.a)    Gauss limitedLinear 0.5;
+//    div(phi.b,U.b)    Gauss  limitedLinear 0.5;
+   div(phi.a,U.a)    Gauss limitedLinearV 1; //Gauss filteredLinear2V 1 0;
+    div(phi.b,U.b)    Gauss limitedLinearV 1; //Gauss filteredLinear2V 1 0;
+    div(phiRa,Ua)   Gauss upwind phiRa; // used until t=1s
+    div(phiRb,Ub)   Gauss upwind phiRb; // used until t=1s
+//
+//    div(phiRa,Ua)   Gauss limitedLinear 0.5;
+//    div(phiRb,Ub)   Gauss limitedLinear 0.5;
+//    div(phiRa,Ua)   Gauss linear;
+//    div(phiRb,Ub)   Gauss linear;
+    div(Rca)        Gauss linear;
+    div(Rcb)        Gauss linear;
+// pEqn
+    div(alpha,nu)   Gauss linear;
+// Turbulence
+    div(betaPhi.b,flmb.b)   Gauss limitedLinear 1;
+    div(betaPhi.b,fmmb.b)   Gauss limitedLinear 1;
+    div(alphaPhi.a,flma.a) Gauss limitedLinear 1;
+    div(alphaPhi.a,fmma.a) Gauss limitedLinear 1;
+// ThetaEqn
+    div(phi,Theta)  Gauss limitedLinear 1;
+//    div(phi,Theta)  Gauss upwind phi.a;
+// alphaPlastic
+    div(phi.a,alphaPlastic)    Gauss upwind;
+// pa
+    div(phia,pa_new_value)    Gauss upwind;
+}
+
+laplacianSchemes
+{
+    default         none;
+// alphaEqn
+    laplacian(alphaPpMag,alpha) Gauss linear corrected;
+// UEqn
+    laplacian(nuEffa,U.a) Gauss linear corrected;
+    laplacian(nuEffb,U.b) Gauss linear corrected;
+    laplacian(nuFra,U.a)  Gauss linear corrected;
+    laplacian(U.b)	  Gauss linear corrected;
+// pEqn
+    laplacian((rho*(1|A(U))),p_rbgh) Gauss linear corrected;
+// k and EpsilonEqn 
+    laplacian(DkEff,k.b) Gauss linear corrected;
+    laplacian(DkEff,beta) Gauss linear corrected;
+    laplacian(DepsilonEff,epsilon.b) Gauss linear corrected;
+    laplacian(DomegaEff,omega.b) Gauss linear corrected;
+    laplacian(DepsilonEff,beta) Gauss linear corrected;
+//ThetaEqn
+    laplacian(kappa,Theta) Gauss linear corrected;
+    laplacian(kappa2,alpha) Gauss linear corrected;
+    laplacian(kappaAlpha,alpha) Gauss linear corrected;
+}
+
+interpolationSchemes
+{
+    default  linear;
+}
+
+snGradSchemes
+{
+    default         corrected;
+}
+
+fluxRequired
+{
+    default         no;
+    p_rbgh               ;
+}
+
+wallDist
+{
+    method meshWave;
+  
+    // Optional entry enabling the calculation
+    // of the normal-to-wall field
+    nRequired false;
+  
+    // Optional entry delaying wall distance update to every n steps
+    // Default is 1 (update every step)
+    updateInterval 5;
+}
+
+// ************************************************************************* //

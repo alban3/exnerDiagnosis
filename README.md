@@ -22,6 +22,8 @@ massBalance2D.py -> 2D scour downstream an apron configuration
 
 massBalance3D.py -> 3D scour around a square cylinder configuration
 
+massBalance3DCyl.py -> 3D scour around a circular cylinder configuration
+
 ### Name of each term : 
 
 phi_dzbed_sur_dt   -> term 1  : bed evolution
@@ -30,15 +32,17 @@ intdVolPhi_sur_dt  -> term 2  : storage evolution
 
 intSlat_PindS      -> term 3  : lateral flux
 
-intS_PindS         -> term 4a : bed flux vertical component   ( available for 1D, 2D, 3D configurations )
+intS_PindS         -> term 4a : bed flux vertical component   ( available for 1D, 2D, 3D, 3DCyl configurations )
 
-intS2_PindS        -> term 4b : bed flux streamwise component ( available for 2D, 3D configurations     )
+intS2_PindS        -> term 4b : bed flux streamwise component ( available for 2D, 3D, 3DCyl configurations     )
 
-intS3_PindS        -> term 4c : bed flux spanwise component   ( available for 3D configuration          )
+intS3_PindS        -> term 4c : bed flux spanwise component   ( available for 3D, 3DCyl configuration          )
 
-intStop_PindS      -> term 5 : top flux                       ( available for 1D, 2D, 3D configurations )
+intStop_PindS      -> term 5 : top flux                       ( available for 1D, 2D, 3D, 3DCyl configurations )
 
-### Python scripts reproducing the figure of the article:
+### Python scripts reproducing figures :
+
+#### From article [*https://doi.org/10.1016/j.ijmultiphaseflow.2025.105457*](https://doi.org/10.1016/j.ijmultiphaseflow.2025.105457):
 
 figures1D.py -> reproduce figures 6, 7a and 7b
 
@@ -46,9 +50,13 @@ figures2D.py -> reproduce figures 9a, 9b, 10 (result output at time 50 required)
 
 figures3D.py -> reproduce figures 14a, 14b, 16a and 16b
 
+#### From article in progress :
+
+figures3DCyl.py -> reproduce figures 9 (zone 1) and 10 (bed-load and suspended-load flux through S1 and S2 only)
+
 Results are already saved in Configuration folder, to reproduce the figures, simply run `figures*D.py` as it is coded. It is possible to reconstruct the data from scratch with the following steps:
 
-#### 1D configuration :
+##### 1D configuration :
 
 Step 1 : run `Allrun` and wait for the end of the simulation
 
@@ -58,7 +66,7 @@ Step 3 : switch to False the variable resultCreated l.25 in figures1D.py to prod
 
 Step 4 : run `figures1D.py`
 
-#### 2D configuration :
+##### 2D configuration :
 
 Step 1 : run `Allrun.pre` and wait for the end of the 1D simulation required for the inlet boundary condition
 
@@ -74,7 +82,7 @@ Step 6 : switch to True the variable save_point_nc l.31 in figures2D.py to save 
 
 Step 7 : run `figures2D.py`
 
-#### 3D configuration :
+##### 3D configuration :
 
 Step 1 : run `Allrun.pre` and wait for the end of the 1D simulation required for the inlet boundary condition
 
@@ -90,13 +98,27 @@ Step 6 : switch to True the variable save_point_nc l.39 in figures3D.py to save 
 
 Step 7 : run `figures3D.py`
 
+##### 3DCyl configuration :
+
+Configuration used is given with main files. Initialization requied previous simulation (for instance using RANS model). Once the simulation ended, follow the usual step :
+
+Step 1 : switch to False the variable meshCreated l.76 in figures3DCyl.py to produce the read_mesh.h5 file
+
+Step 2 : switch to False the variable resultCreated l.77 in figures3DCyl.py to produce the read_massBalance*.h5 files
+
+Step 3 : switch to False the variable read_point_nc l.74 in figures3DCyl.py to produce pointerpostproc.nc file
+
+Step 4 : switch to True the variable save_point_nc l.75 in figures3DCyl.py to save pointerpostproc.nc file
+
+Step 5 : run `figures3DCyl.py`
+
 It is also possible to construct new results in a different zone by modifying the massBalance*D.py file described as follows:
 
-#### 1D configuration :
+##### 1D configuration :
 
 Only 1 zone possible, the one above the bed.
 
-#### 2D configuration :
+##### 2D configuration :
 
 Step 1 : modify the upstream limit with the variable xmin l.21 in massBalance2D.py
 
@@ -106,7 +128,7 @@ Step 3 : switch to False the variable resultCreated l.26 in figures2D.py to prod
 
 Step 4 : run `figures2D.py` (no need to do steps 3, 5 and 6 previously described if read_mesh.h5 and pointerpostproc.nc already exist)
 
-#### 3D configuration :
+##### 3D configuration :
 
 Step 1 : modify the upstream limit with the variable xmin l.22 in massBalance3D.py
 
@@ -119,6 +141,16 @@ Step 4 : modify the left limit with the variable ymin l.25 in massBalance3D.py
 Step 5 : switch to False the variable resultCreated l.41 in figures3D.py to produce the new read_massBalance*.h5 files
 
 Step 6 : run `figures3D.py` (no need to do steps 3, 5 and 6 previously described if read_mesh.h5 and pointerpostproc.nc already exist)
+
+##### 3DCyl configuration :
+
+Step 1 : modify the first orthoradial limit with the variable thetaZ1st l.241 in massBalance3DCyl.py
+
+Step 2 : modify the final orthoradial limit with the variable thetaZ1end l.242 in massBalance3DCyl.py
+
+Step 3 : switch to False the variable resultCreated l.77 in figures3DCyl.py to produce the new read_massBalance*.h5 files
+
+Step 4 : run `figures3DCyl.py` (no need to do steps 1, 3 and 4 previously described if read_mesh.h5 and pointerpostproc.nc already exist)
 
 ## Authors
 

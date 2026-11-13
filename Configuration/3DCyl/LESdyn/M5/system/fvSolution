@@ -1,0 +1,133 @@
+/*--------------------------------*- C++ -*----------------------------------*\
+| =========                 |                                                 |
+| \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox           |
+|  \\    /   O peration     | Version:  1.7.1                                 |
+|   \\  /    A nd           | Web:      www.OpenFOAM.com                      |
+|    \\/     M anipulation  |                                                 |
+\*---------------------------------------------------------------------------*/
+FoamFile
+{
+    version     2.0;
+    format      ascii;
+    class       dictionary;
+    location    "system";
+    object      fvSolution;
+}
+// * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
+solvers
+{
+    p_rbgh
+    {
+        solver          PCG;
+        preconditioner  DIC;
+        tolerance       1e-4;
+        relTol          0.05;
+	//maxIter		200;
+    }
+
+    p_rbghFinal
+    {
+        $p_rbgh;
+        tolerance       1e-4;
+        relTol          0;
+    }
+
+    "flmb.b|flmb.bFinal|fmmb.b|fmmb.bFinal|flma.a|flma.aFinal|fmma.a|fmma.aFinal"
+    {
+        solver          PBiCGStab;
+        preconditioner  DILU;
+        tolerance       1e-10;
+        relTol          0;
+	minIter		1;
+    }
+
+    "(k.b|epsilon.b|omega.b)Final"
+    {
+        solver          PBiCG;
+        preconditioner  DILU;
+        tolerance       1e-15;
+        relTol          0;
+	minIter		1;
+    }
+
+
+    "U.a|U.aFinal"
+    {
+        solver          PBiCG;
+        preconditioner  DILU;
+        tolerance       1e-6;
+        relTol          0;
+	minIter		1;
+    }
+
+    "U.b|U.bFinal"
+    {
+        solver          PBiCG;
+        preconditioner  DILU;
+        tolerance       1e-6;
+        relTol          0;
+	minIter		1;
+    }
+
+    "(alpha.a|alphaPlastic|pa)"
+    {
+        solver          PBiCG;
+        preconditioner  DILU;
+        tolerance       1e-9;
+        relTol          0;
+	minIter		1;
+    }
+    "(alpha.aFinal|alphaPlasticFinal|paFinal)"
+    {
+        solver          PBiCG;
+        preconditioner  DILU;
+        tolerance       1e-9;
+        relTol          0;
+	minIter		1;
+    }
+    Theta
+    {
+        solver          PBiCGStab;
+        preconditioner  DILU;
+        tolerance       1e-6;
+        relTol          0;
+	minIter		1;
+    }
+    ThetaFinal
+    {
+        solver          PBiCGStab;
+        preconditioner  DILU;
+        tolerance       1e-6;
+        relTol          0;
+	minIter		1;
+    }
+
+
+
+}
+/*relaxationFactors
+{
+    equations
+    {
+        Theta            0.9; // 0.9 is more stable but 0.95 more convergent
+	flmb.b		 0.9;
+	fmmb.b		 0.9;
+	flma.a		 0.9;
+	fmma.a		 0.9;
+    }
+}*/
+
+PIMPLE
+{
+    nCorrectors     2;
+    nOuterCorrectors 1;
+    nNonOrthogonalCorrectors 1;
+    nAlphaCorr      1;
+    correctAlpha    no;
+    //pRefPoint       (0.001 0.001 0.0001);
+    pRefCell        1001;
+    pRefValue       0;
+    faceMomentum    true;
+}
+
+// ************************************************************************* //
